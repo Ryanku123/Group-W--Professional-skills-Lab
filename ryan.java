@@ -17,12 +17,12 @@ public class UserManager {
 
     public User register(String username) {
         if (users.containsKey(username)) {
-            System.out.println("이미 존재하는 사용자입니다.");
+            System.out.println("The user already exists.");
             return null;
         }
         User user = new User(username);
         users.put(username, user);
-        System.out.println("회원가입 완료!");
+        System.out.println("Sign-up complete!");
         return user;
     }
 }
@@ -46,13 +46,13 @@ public class ScoreManager {
         List<Integer> scores = scoreMap.get(gameName);
 
         if (scores == null || scores.isEmpty()) {
-            System.out.println("아직 점수가 없습니다.");
+            System.out.println("You don’t have a score yet.");
             return;
         }
 
         scores.sort(Collections.reverseOrder());
 
-        System.out.println("=== " + gameName + " 점수 ===");
+        System.out.println("=== " + gameName + " Score ===");
         for (int s : scores) {
             System.out.println(s);
         }
