@@ -1,12 +1,6 @@
 game 4
-
-
-요약
-
 Mohammad Zaid Ibrahim ALKURDI
-
 ​
-Ryan KU​
 import java.util.Random;
 import java.util.Scanner;
 
