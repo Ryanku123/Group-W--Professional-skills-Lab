@@ -1,1 +1,0 @@
-# Group-W--Professional-skills-Lab
