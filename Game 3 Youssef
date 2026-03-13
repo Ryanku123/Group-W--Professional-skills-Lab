@@ -1,0 +1,178 @@
+import java.util.*;
+
+public class Game3_DiceCodebreaker implements Game
+{
+
+    private static final int CODE_LENGTH  = 4;
+    private static final int MAX_ATTEMPTS = 8;
+
+    private Random rand = new Random();
+    private Scanner sc = new Scanner(System.in);
+
+    @Override
+    public String getName() {
+        return "Dice Codebreaker";
+    }
+
+    @Override
+    public int play(User user)
+    {
+
+        int[] secret = generateCode();
+
+        System.out.println();
+        System.out.println("==============================");
+        System.out.println("  GAME 3: Dice Codebreaker");
+        System.out.println("==============================");
+        System.out.println("A secret 4-dice code has been generated (each die: 1-6).");
+        System.out.println("You have " + MAX_ATTEMPTS + " attempts. After each guess:");
+        System.out.println("  [O] = correct number, correct position");
+        System.out.println("  [?] = correct number, wrong position");
+        System.out.println("  [X] = wrong number");
+        System.out.println();
+
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)
+        {
+
+            System.out.print("Attempt " + attempt + "/" + MAX_ATTEMPTS +
+                    " - Enter 4 numbers (1-6) separated by spaces: ");
+
+            int[] guess = readGuess();
+
+            String[] feedback = getFeedback(secret, guess);
+
+            System.out.print("Feedback: ");
+            for (String f : feedback) {
+                System.out.print(f + " ");
+            }
+            System.out.println();
+
+            boolean win = true;
+            for (String f : feedback)
+            {
+                if (!f.equals("[O]"))
+                {
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win)
+            {
+                int score = (MAX_ATTEMPTS - attempt + 1) * 10;
+                System.out.println();
+                System.out.println("You cracked the code! Score: " + score + " pts");
+                return score;
+            }
+
+            System.out.println();
+        }
+
+        System.out.print("Out of attempts! The code was: [");
+        for (int i = 0; i < CODE_LENGTH; i++)
+        {
+            System.out.print(secret[i]);
+            if (i < CODE_LENGTH - 1) System.out.print(", ");
+        }
+        System.out.println("]");
+
+        return 0;
+    }
+
+    private int[] generateCode()
+    {
+
+        int[] code = new int[CODE_LENGTH];
+
+        for (int i = 0; i < CODE_LENGTH; i++)
+        {
+            code[i] = rand.nextInt(6) + 1;
+        }
+
+        return code;
+    }
+
+    private int[] readGuess()
+    {
+
+        while (true)
+        {
+
+            String line = sc.nextLine().trim();
+            String[] parts = line.split("\\s+");
+
+            if (parts.length != CODE_LENGTH) {
+                System.out.print("Enter exactly 4 numbers: ");
+                continue;
+            }
+
+            int[] guess = new int[CODE_LENGTH];
+
+            try {
+
+                for (int i = 0; i < CODE_LENGTH; i++)
+                {
+
+                    guess[i] = Integer.parseInt(parts[i]);
+
+                    if (guess[i] < 1 || guess[i] > 6)
+                    {
+                        System.out.print("Numbers must be 1-6. Try again: ");
+                        throw new Exception();
+                    }
+                }
+
+                return guess;
+
+            } catch (Exception e)
+            {
+                System.out.print("Invalid input. Enter 4 numbers (1-6): ");
+            }
+        }
+    }
+
+    private String[] getFeedback(int[] secret, int[] guess)
+    {
+
+        String[] result = new String[CODE_LENGTH];
+        boolean[] secretUsed = new boolean[CODE_LENGTH];
+        boolean[] guessUsed = new boolean[CODE_LENGTH];
+
+        // Pass 1: exact matches
+        for (int i = 0; i < CODE_LENGTH; i++)
+        {
+            if (guess[i] == secret[i])
+            {
+                result[i] = "[O]";
+                secretUsed[i] = true;
+                guessUsed[i] = true;
+            }
+        }
+
+        // Pass 2: correct number wrong position
+        for (int i = 0; i < CODE_LENGTH; i++)
+        {
+
+            if (guessUsed[i]) continue;
+
+            for (int j = 0; j < CODE_LENGTH; j++)
+            {
+
+                if (!secretUsed[j] && guess[i] == secret[j])
+                {
+                    result[i] = "[?]";
+                    secretUsed[j] = true;
+                    guessUsed[i] = true;
+                    break;
+                }
+            }
+
+            if (result[i] == null)
+            {
+                result[i] = "[X]";
+            }
+        }
+
+        return result;
+    }
+}
