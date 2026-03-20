@@ -1,20 +1,19 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * User.java
- *
- * Stores all data for a single registered player.
- * Tracks:
- *   - username
- *   - total number of games played (across all 4 games)
- *   - highest score per game (array index 0~3)
- *   - most recent score per game (array index 0~3)
- *   - date/time of the last gameplay session
- *
- * recordScore() is called by Main after every game to update stats.
- * printStats() displays a formatted summary to the console.
- */
+//User.java
+ 
+ // Stores all data for a single registered player.
+ //Tracks:
+   //  1. username
+   //  2. total number of games played (across all 4 games)
+   //  3. highest score per game (array index 0~3)
+   //  4. most recent score per game (array index 0~3)
+   //  5. date/time of the last gameplay session
+ 
+ // recordScore() is called by Main after every game to update stats.
+ //printStats() displays a formatted summary to the console.
+ 
 public class User {
     private String username;
     private int totalGamesPlayed;
@@ -32,12 +31,12 @@ public class User {
         this.lastPlayedDateTime = "Never";
     }
 
-    /**
-     * Called after every game session.
-     * Increments total games played, updates recent score,
-     * updates highest score if the new score beats the old record,
-     * and records the current date/time.
-     */
+    //
+     // Called after every game session.
+     // Increments total games played, updates recent score,
+     // updates highest score if the new score beats the old record,
+     // and records the current date/time.
+     
     public void recordScore(int gameIndex, int score) {
         totalGamesPlayed++;
         recentScore[gameIndex] = score;
@@ -61,7 +60,7 @@ public class User {
     public void setRecentScore(int idx, int val)  { recentScore[idx] = val; }
     public void setLastPlayedDateTime(String dt)  { lastPlayedDateTime = dt; }
 
-    /** Prints a formatted stat summary for this player to the console. */
+    // Prints a formatted stat summary for this player to the console. 
     public void printStats(String[] gameNames) {
         System.out.println("\n===== Player Stats: " + username + " =====");
         System.out.println("Total games played : " + totalGamesPlayed);
