@@ -1,30 +1,15 @@
 import java.util.Scanner;
 
-/**
- * Main.java — Program Entry Point
- *
- * Responsibilities:
- *   1. Start the program and initialise core objects (UserManager, all 4 games).
- *   2. Handle player registration / login via UserManager.
- *   3. Display the main menu and route to the chosen game's sub-menu.
- *   4. After each game, call user.recordScore() and userManager.saveToFile()
- *      to persist stats immediately.
- *   5. Support switching between players without restarting the program.
- *
- * Design pattern used — "Array of interfaces":
- *   All 4 game objects are stored in a Game[] array.
- *   This means the menu loop can call games[i].play(user) uniformly
- *   without knowing (or caring) which specific game class is behind index i.
- *   Adding a 5th game only requires adding one line to the array.
- *
- * Input validation:
- *   readInt() wraps Integer.parseInt in a try/catch and returns -1 on failure.
- *   Every menu switch/if then handles -1 gracefully with a default message,
- *   so invalid input never crashes the program.
- */
-public class Main {
+import java.util.Scanner;
 
-    /** Display names used in menus and stat screens — must match game order in the array. */
+//The structure of the software includes a main menu where the user is able to make a selection of a game and its appropriate sub-menu. 
+ // featuree
+    // 1.When the exit from a game occurs, the system makes a call to the record score function and the save to file function for the user manager to achieve the insurance of stats being saved immediately after the session of gaming. 
+    // 2.players have the ability to switch between accounts without a requirement to restart the whole program.
+
+Regarding the architecture of the code, a design pattern which is called array of interfaces was implemented. All four of the game objects are stored in a single array of the game type. The loop for the menu can call the play method for any index in the array and it is not important which specific subclass of game is located at that index. If there is a need for adding a fifth game, this only requires the addition of one line in the declaration of the array.
+
+The validation of input is also a very important part of the project. There is a method for reading integers that uses a try and catch block to process the parsing of the integer. If an error is happening during this process, the method returns a value of negative one. Each part of the menu then performs a check to see if the value is negative one and provides a response by using a default message. Because of this, any invalid input is managed by the code and it never causes the stopping of the program because of an exception. This ensures that the user experience is staying consistent and stable.
     private static final String[] GAME_NAMES = {
         "Dice Patterns Challenge",
         "Dice Grid Puzzle",
@@ -35,12 +20,11 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        // Core manager objects — created once and reused throughout the session
+        // Core manager objects is created once and reused throughout the session
         UserManager userManager = new UserManager();  // Loads players.txt on creation
         ScoreManager scoreManager = new ScoreManager();
 
-        // All 4 games share a single ScoreManager is NOT needed here —
-        // each game handles its own scoring internally and returns an int score.
+        // each game will handles its own scoring internally and returns an int score.
         Game[] games = {
             new Game1_DicePatterns(),
             new Game2_DiceGrid(),
@@ -103,17 +87,17 @@ public class Main {
         sc.close();
     }
 
-    /**
-     * Displays the sub-menu for a specific game.
-     * Options: Play, view best score, or go back.
-     * After playing, immediately saves the updated stats to file.
-     *
-     * @param sc          shared Scanner for console input
-     * @param game        the selected Game implementation
-     * @param gameIndex   0-based index used to reference the correct stat slot in User
-     * @param user        the currently active player
-     * @param userManager used to persist data after every game
-     */
+    
+     //Displays the sub-menu for a specific game.
+      // Options: Play, view best score, or go back but i didn't unify yet for all games
+      // After playing, immediately saves the updated stats to file.
+     
+        //@param sc          shared Scanner for console input
+        //@param game        the selected Game implementation
+        // @param gameIndex   0-based index used to reference the correct stat slot in User
+        // @param user        the currently active player
+        // @param userManager used to persist data after every game
+     
     private static void runGameMenu(Scanner sc, Game game, int gameIndex,
                                     User user, UserManager userManager, ScoreManager scoreManager) {
         while (true) {
@@ -143,9 +127,8 @@ public class Main {
         }
     }
 
-    /**
-     * Leaderboard selection menu — lets the user pick which game's leaderboard to view.
-     */
+    
+     // Leaderboard selection menu — user can pick which game's leaderboard to view.
     private static void showLeaderboardMenu(Scanner sc, ScoreManager scoreManager,
                                             UserManager userManager, String[] gameNames) {
         while (true) {
@@ -167,10 +150,10 @@ public class Main {
         }
     }
 
-    /**
-     * Safe integer reader — returns -1 if the input is not a valid integer.
-     * Prevents NumberFormatException from crashing the menu loops.
-     */
+    
+     // Safe integer reader — returns -1 if the input is not a valid integer.
+     // Prevents NumberFormatException from crashing the menu loops.
+     
     private static int readInt(Scanner sc) {
         try {
             return Integer.parseInt(sc.nextLine().trim());
