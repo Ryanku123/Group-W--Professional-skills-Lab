@@ -1,30 +1,33 @@
 import java.util.*;
 
-/**
- * ScoreManager.java — Per-Game Leaderboard Manager
- *
- * Responsibilities:
- *   - Collects the highest score of every registered user for each game.
- *   - Sorts and displays a ranked leaderboard per game.
- *
- * Design:
- *   ScoreManager does NOT store scores itself.
- *   It receives the full list of User objects from UserManager and reads
- *   their getHighestScore(gameIndex) values on demand.
- *   This avoids data duplication — User is still the single source of truth.
- *
- * Usage in Main:
- *   scoreManager.showLeaderboard(gameIndex, gameName, allUsers);
- */
+//The ScoreManager class acts as the person who manages leaderboards for each game in the system. 
+  //responsibility 
+     //1. collect of highest scores from all the registered users regarding a specific game. 
+     //2. This class performs sorting and then it shows the leaderboard with rankings.
+  //design
+     //1. ScoreManager does not have its own storage for the scores. 
+     //2. full list of objects of User from the UserManager and it makes a reading of values through 
+     // the method getHighestScore for the game index when there is a demand. 
+     // This is a very important issue for the prevention of duplication of data because 
+     // the User stays as the single source of truth about the matter.
+
+   //usage of the main program
+      //the scoreManager can show the leaderboard by using the index of game and the name of game and all users.
+          //The building and the printing of the ranked leaderboard for one specific game is done by the code. 
+          //This involves the 0-based index which matches with the score arrays of User 
+          //It also involves the name of game for the header and the list of all the users from UserManager. 
+          //This method allows for a clear display of performance and competition and ranking. 
+          //This structure maintains a balance of information across the system for the users.
+
 public class ScoreManager {
 
-    /**
-     * Builds and prints a ranked leaderboard for one specific game.
-     *
-     * @param gameIndex  0-based index of the game (matches User's score arrays)
-     * @param gameName   display name shown in the header
-     * @param allUsers   all registered User objects (from UserManager)
-     */
+    
+     //Builds and prints a ranked leaderboard for one specific game.
+     
+       * @param gameIndex  0-based index of the game (matches User's score arrays)
+       * @param gameName   display name shown in the header
+       * @param allUsers   all registered User objects (from UserManager)
+     
     public void showLeaderboard(int gameIndex, String gameName, List<User> allUsers) {
         if (allUsers.isEmpty()) {
             System.out.println("No players registered yet.");
