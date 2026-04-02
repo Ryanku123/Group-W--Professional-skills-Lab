@@ -1,4 +1,3 @@
-public interface Game {
-    void start(User user);
-    void showScores();
-}
+// FIXED — matches all 4 game classes and Main
+int play(User user);
+String getName();
