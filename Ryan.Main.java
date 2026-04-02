@@ -16,7 +16,7 @@ The validation of input is also a very important part of the project. There is a
         "Dice Codebreaker",
         "Dice Blackjack"
     };
-
+public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
