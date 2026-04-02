@@ -6,16 +6,16 @@ import java.util.Scanner;
     // 1.When the exit from a game occurs, the system makes a call to the record score function and the save to file function for the user manager to achieve the insurance of stats being saved immediately after the session of gaming. 
     // 2.players have the ability to switch between accounts without a requirement to restart the whole program.
 
-Regarding the architecture of the code, a design pattern which is called array of interfaces was implemented. All four of the game objects are stored in a single array of the game type. The loop for the menu can call the play method for any index in the array and it is not important which specific subclass of game is located at that index. If there is a need for adding a fifth game, this only requires the addition of one line in the declaration of the array.
-
-The validation of input is also a very important part of the project. There is a method for reading integers that uses a try and catch block to process the parsing of the integer. If an error is happening during this process, the method returns a value of negative one. Each part of the menu then performs a check to see if the value is negative one and provides a response by using a default message. Because of this, any invalid input is managed by the code and it never causes the stopping of the program because of an exception. This ensures that the user experience is staying consistent and stable.
+//Regarding the architecture of the code, a design pattern which is called array of interfaces was implemented. All four of the game objects are stored in a single array of the game type. The loop for the menu can call the play method for any index in the array and it is not important which specific subclass of game is located at that index. If there is a need for adding a fifth game, this only requires the addition of one line in the declaration of the array.
+//The validation of input is also a very important part of the project. There is a method for reading integers that uses a try and catch block to process the parsing of the integer. If an error is happening during this process, the method returns a value of negative one. Each part of the menu then performs a check to see if the value is negative one and provides a response by using a default message. Because of this, any invalid input is managed by the code and it never causes the stopping of the program because of an exception. This ensures that the user experience is staying consistent and stable.
+public class Main {
     private static final String[] GAME_NAMES = {
         "Dice Patterns Challenge",
         "Dice Grid Puzzle",
         "Dice Codebreaker",
         "Dice Blackjack"
     };
-public class Main {
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
