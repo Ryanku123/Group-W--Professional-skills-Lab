@@ -1,6 +1,5 @@
 import java.util.Scanner;
 
-import java.util.Scanner;
 
 //The structure of the software includes a main menu where the user is able to make a selection of a game and its appropriate sub-menu. 
  // featuree
