@@ -24,9 +24,9 @@ public class ScoreManager {
     
      //Builds and prints a ranked leaderboard for one specific game.
      
-       * @param gameIndex  0-based index of the game (matches User's score arrays)
-       * @param gameName   display name shown in the header
-       * @param allUsers   all registered User objects (from UserManager)
+       //@param gameIndex  0-based index of the game (matches User's score arrays)
+       // @param gameName   display name shown in the header
+       // @param allUsers   all registered User objects (from UserManager)
      
     public void showLeaderboard(int gameIndex, String gameName, List<User> allUsers) {
         if (allUsers.isEmpty()) {
