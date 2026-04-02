@@ -66,9 +66,9 @@ public class ScoreManager {
         System.out.println("--------------------------------------");
         for (int i = 0; i < n; i++) {
             String medal = "";
-            if      (i == 0) medal = " 🥇";
-            else if (i == 1) medal = " 🥈";
-            else if (i == 2) medal = " 🥉";
+            if      (i == 0) medal = " Gold ";
+            else if (i == 1) medal = " Silver ";
+            else if (i == 2) medal = " Bronze ";
             System.out.printf("%-6s %-20s %d pts%s%n",
                     "#" + (i + 1), names.get(i), scores.get(i)[0], medal);
         }
