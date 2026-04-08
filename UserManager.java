@@ -30,7 +30,7 @@ public class UserManager {
 
     public void saveToFile() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
-            writer.println("# username,totalGames,high0,high1,high2,high3,recent0,recent1,recent2,recent3");
+            writer.println("# username,totalGames,high0,high1,high2,high3,recent0,recent1,recent2,recent3,lastPlayed");
 
             for (User user : users.values()) {
                 writer.print(user.getUsername());
@@ -44,6 +44,7 @@ public class UserManager {
                     writer.print("," + user.getRecentScore(i));
                 }
 
+                writer.print("," + user.getLastPlayedDateTime());
                 writer.println();
             }
         } catch (IOException e) {
@@ -88,6 +89,10 @@ public class UserManager {
 
                 for (int i = 0; i < 4; i++) {
                     user.setRecentScore(i, Integer.parseInt(parts[6 + i]));
+                }
+
+                if (parts.length >= 11 && !parts[10].isEmpty()) {
+                    user.setLastPlayedDateTime(parts[10]);
                 }
 
                 users.put(username, user);
