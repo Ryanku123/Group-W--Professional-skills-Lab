@@ -3,8 +3,8 @@ import java.util.*;
 // Game2_DiceGrid.java
 // 3x3 grid dice placement game
 public class Game2_DiceGrid implements Game {
-    private Scanner scanner = new Scanner(System.in);
-    private Random random = new Random();
+    private final Scanner scanner = new Scanner(System.in);
+    private final Random random = new Random();
 
     @Override
     public String getName() {
@@ -20,14 +20,15 @@ public class Game2_DiceGrid implements Game {
 
         int[][] grid = new int[3][3];
 
-        // Fill grid with 9 dice placements
         for (int turn = 1; turn <= 9; turn++) {
             int roll = random.nextInt(6) + 1;
             System.out.println("\nTurn " + turn + ": You rolled " + roll);
 
             printGrid(grid);
 
-            int row, col;
+            int row;
+            int col;
+
             while (true) {
                 row = readInt("Choose row (1-3): ") - 1;
                 col = readInt("Choose column (1-3): ") - 1;
@@ -70,7 +71,6 @@ public class Game2_DiceGrid implements Game {
     private int scoreGrid(int[][] grid) {
         int total = 0;
 
-        // Rows
         for (int i = 0; i < 3; i++) {
             int[] line = {grid[i][0], grid[i][1], grid[i][2]};
             int lineScore = scoreLine(line);
@@ -79,7 +79,6 @@ public class Game2_DiceGrid implements Game {
             total += lineScore;
         }
 
-        // Columns
         for (int j = 0; j < 3; j++) {
             int[] line = {grid[0][j], grid[1][j], grid[2][j]};
             int lineScore = scoreLine(line);
@@ -88,14 +87,12 @@ public class Game2_DiceGrid implements Game {
             total += lineScore;
         }
 
-        // Main diagonal
         int[] diag1 = {grid[0][0], grid[1][1], grid[2][2]};
         int diag1Score = scoreLine(diag1);
         System.out.println("Diagonal 1: " + Arrays.toString(diag1)
                 + " -> " + lineName(diag1) + " = " + diag1Score + " points");
         total += diag1Score;
 
-        // Other diagonal
         int[] diag2 = {grid[0][2], grid[1][1], grid[2][0]};
         int diag2Score = scoreLine(diag2);
         System.out.println("Diagonal 2: " + Arrays.toString(diag2)
@@ -110,22 +107,18 @@ public class Game2_DiceGrid implements Game {
         int[] sorted = line.clone();
         Arrays.sort(sorted);
 
-        // Three of a kind
         if (sorted[0] == sorted[1] && sorted[1] == sorted[2]) {
             return 30;
         }
 
-        // Straight
         if (isStraight3(sorted)) {
             return 20;
         }
 
-        // Pair
         if (sorted[0] == sorted[1] || sorted[1] == sorted[2]) {
             return 10;
         }
 
-        // All different
         return 5;
     }
 
