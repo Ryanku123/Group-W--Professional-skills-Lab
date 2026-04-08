@@ -1,101 +1,51 @@
-import java.io.*;
 import java.util.*;
 
-// UserManager.java
-// Handles player registration and persistent storage
-public class UserManager {
-    private static final String FILE_PATH = "players.txt";
+// ScoreManager.java
+// Shows leaderboard for a selected game
+public class ScoreManager {
 
-    private Map<String, User> users = new LinkedHashMap<>();
+    public void showLeaderboard(int gameIndex, String gameName, List<User> allUsers) {
+        List<UserScore> leaderboard = new ArrayList<>();
 
-    public UserManager() {
-        loadFromFile();
-    }
-
-    public User register(String username) {
-        username = username.trim();
-
-        if (users.containsKey(username)) {
-            System.out.println("Welcome back, " + username + "!");
-            return users.get(username);
-        }
-
-        User newUser = new User(username);
-        users.put(username, newUser);
-        saveToFile();
-
-        System.out.println("New player registered: " + username);
-        return newUser;
-    }
-
-    public void saveToFile() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
-            writer.println("# username,totalGames,high0,high1,high2,high3,recent0,recent1,recent2,recent3");
-
-            for (User user : users.values()) {
-                writer.print(user.getUsername());
-                writer.print("," + user.getTotalGamesPlayed());
-
-                for (int i = 0; i < 4; i++) {
-                    writer.print("," + user.getHighestScore(i));
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    writer.print("," + user.getRecentScore(i));
-                }
-
-                writer.println();
+        for (User user : allUsers) {
+            int score = user.getHighestScore(gameIndex);
+            if (score > 0) {
+                leaderboard.add(new UserScore(user.getUsername(), score));
             }
-        } catch (IOException e) {
-            System.out.println("Error saving player data: " + e.getMessage());
         }
-    }
 
-    public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
-    }
+        leaderboard.sort((a, b) -> Integer.compare(b.score, a.score));
 
-    private void loadFromFile() {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
+        System.out.println("\n=== Leaderboard: " + gameName + " ===");
+
+        if (leaderboard.isEmpty()) {
+            System.out.println("No scores recorded yet.");
             return;
         }
 
-        try (Scanner fileScanner = new Scanner(file)) {
-            while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine().trim();
+        for (int i = 0; i < leaderboard.size(); i++) {
+            UserScore entry = leaderboard.get(i);
+            String medal = "";
 
-                if (line.isEmpty() || line.startsWith("#")) {
-                    continue;
-                }
-
-                String[] parts = line.split(",");
-
-                if (parts.length < 10) {
-                    continue;
-                }
-
-                String username = parts[0];
-                int totalGames = Integer.parseInt(parts[1]);
-
-                User user = new User(username);
-
-                for (int i = 0; i < totalGames; i++) {
-                    user.incrementTotalGamesPlayed();
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    user.setHighestScore(i, Integer.parseInt(parts[2 + i]));
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    user.setRecentScore(i, Integer.parseInt(parts[6 + i]));
-                }
-
-                users.put(username, user);
+            if (i == 0) {
+                medal = "1st ";
+            } else if (i == 1) {
+                medal = "2nd";
+            } else if (i == 2) {
+                medal = "3rd ";
             }
-        } catch (Exception e) {
-            System.out.println("Error loading player data: " + e.getMessage());
+
+            System.out.println((i + 1) + ". " + medal + entry.username + " - " + entry.score);
+        }
+    }
+
+    private static class UserScore {
+        String username;
+        int score;
+
+        UserScore(String username, int score) {
+            this.username = username;
+            this.score = score;
         }
     }
 }
