@@ -1,183 +1,108 @@
 import java.util.*;
 
-// Game2_DiceGrid.java — Dice Grid Puzzle
-
-
+// Game2_DiceGrid.java
+// 3x3 grid dice placement game
 public class Game2_DiceGrid implements Game {
-
-    private static final String NAME = "Dice Grid Puzzle";
-    private Random rand = new Random();
-    private Scanner sc = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
+    private Random random = new Random();
 
     @Override
-    public String getName() { return NAME; }
-
-    @Override
-    public int play(User user) {
-        System.out.println("\n==============================");
-        System.out.println("  GAME 2: Dice Grid Puzzle");
     public String getName() {
-        return NAME;
+        return "Dice Grid";
     }
 
     @Override
     public int play(User user) {
-        int[][] grid = new int[3][3]; 
-        int turns = 0;
+        System.out.println("\n=== " + getName() + " ===");
+        System.out.println("Fill a 3x3 grid with dice rolls.");
+        System.out.println("Each turn you roll one die and choose where to place it.");
+        System.out.println("Rows, columns, and diagonals score points based on patterns.");
 
-        System.out.println("\n==============================");
-        System.out.println("  GAME 2: " + NAME);
-        System.out.println("==============================");
-        System.out.println("Roll a die, then place it in an empty cell (row col, e.g. '2 3').");
-        System.out.println("Score is based on rows and columns after all 9 cells are filled.\n");
+        int[][] grid = new int[3][3];
 
-        int[][] grid = new int[3][3];  // 0 means the cell is empty
-        int remaining = 9;
+        // Fill grid with 9 dice placements
+        for (int turn = 1; turn <= 9; turn++) {
+            int roll = random.nextInt(6) + 1;
+            System.out.println("\nTurn " + turn + ": You rolled " + roll);
 
-        while (remaining > 0) {
-        while (turns < 9) {
-            int rolled = rand.nextInt(6) + 1;
-            System.out.println("You rolled: " + rolled);
             printGrid(grid);
 
-            // Keep asking until the player picks a valid empty cell
-            int row = -1, col = -1;
+            int row, col;
             while (true) {
-                System.out.print("Place it (row col, 1-based): ");
-                try {
-                    String[] parts = sc.nextLine().trim().split("\\s+");
-                    row = Integer.parseInt(parts[0]) - 1;  // Convert to 0-based index
-                    col = Integer.parseInt(parts[1]) - 1;
-            int row = -1, col = -1;
-            boolean validPlacement = false;
+                row = readInt("Choose row (1-3): ") - 1;
+                col = readInt("Choose column (1-3): ") - 1;
 
-            while (!validPlacement) {
-                System.out.print("Place it (row col, 1-based): ");
-                try {
-                    String input = sc.nextLine().trim();
-                    String[] parts = input.split("\\s+");
-                    
-                    if (parts.length < 2) {
-                        System.out.println("Invalid input. Please enter two numbers (row and column).");
-                        continue;
-                    }
-
-                    row = Integer.parseInt(parts[0]) - 1; 
-                    col = Integer.parseInt(parts[1]) - 1;
-
-                    if (row < 0 || row > 2 || col < 0 || col > 2) {
-                        System.out.println("Out of range. Use 1-3.");
-                    } else if (grid[row][col] != 0) {
-                        System.out.println("Cell already taken. Choose another.");
-                    } else {
-                        break;  // Valid cell chosen
-                    }
-                } catch (Exception e) {
-                    System.out.println("Invalid input. Try again.");
-                }
-            }
-            grid[row][col] = rolled;
-            remaining--;
-                        validPlacement = true;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Try again.");
+                if (row < 0 || row > 2 || col < 0 || col > 2) {
+                    System.out.println("Invalid position. Use numbers 1 to 3.");
+                } else if (grid[row][col] != 0) {
+                    System.out.println("That cell is already filled. Choose another one.");
+                } else {
+                    break;
                 }
             }
 
-            grid[row][col] = rolled;
-            turns++;
+            grid[row][col] = roll;
         }
 
         System.out.println("\nFinal Grid:");
         printGrid(grid);
+
         int totalScore = scoreGrid(grid);
-        System.out.println("Total Score: " + totalScore + " pts");
+
+        System.out.println("\n" + user.getUsername() + ", your score for " + getName() + ": " + totalScore);
         return totalScore;
     }
 
-    /** Draws the current state of the 3x3 grid with borders and labels. */
     private void printGrid(int[][] grid) {
-        System.out.println("  +---+---+---+");
-        for (int r = 0; r < 3; r++) {
-            System.out.print((r + 1) + " |");
-            for (int c = 0; c < 3; c++) {
-                // Show "." for empty cells, the value otherwise
-                System.out.print(" " + (grid[r][c] == 0 ? "." : grid[r][c]) + " |");
+        System.out.println();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (grid[i][j] == 0) {
+                    System.out.print("[ ] ");
+                } else {
+                    System.out.print("[" + grid[i][j] + "] ");
+                }
             }
             System.out.println();
         }
-        System.out.println("  +---+---+---+");
-        System.out.println("    1   2   3");
-    }
-
-    //
-     // Scores all 3 rows and all 3 columns.
-     // For columns, the values are extracted vertically from the 2D array.
-     // Prints a per-line breakdown and returns the total.
-     
-    private int scoreGrid(int[][] grid) {
-        int total = 0;
-        System.out.println("\n--- Row Scores ---");
-        for (int r = 0; r < 3; r++) {
-            int[] line = {grid[r][0], grid[r][1], grid[r][2]};
-            int s = scoreLine(line);
-            System.out.println("Row " + (r + 1) + " " + Arrays.toString(line) + ": " + s + " pts (" + lineName(line) + ")");
-            total += s;
-        }
-        System.out.println("\n--- Column Scores ---");
-        for (int c = 0; c < 3; c++) {
-            // Extract column values from 2D array
-            int[] line = {grid[0][c], grid[1][c], grid[2][c]};
-            int s = scoreLine(line);
-            System.out.println("Col " + (c + 1) + " " + Arrays.toString(line) + ": " + s + " pts (" + lineName(line) + ")");
-            total += s;
-        }
-        return total;
-    }
-
-    // Returns the score for a single 3-value line based on its pattern. */
-    private int scoreLine(int[] line) {
-        int[] sorted = line.clone(); Arrays.sort(sorted);
-
-        int totalScore = scoreGrid(grid);
-        System.out.println("\nTotal Score: " + totalScore + " pts");
-        
-        return totalScore;
-    }
-
-    private void printGrid(int[][] grid) {
-        System.out.println("    +---+---+---+");
-        for (int r = 0; r < 3; r++) {
-            System.out.print("  " + (r + 1) + " | ");
-            for (int c = 0; c < 3; c++) {
-                String val = (grid[r][c] == 0) ? "." : String.valueOf(grid[r][c]);
-                System.out.print(val + " | ");
-            }
-            System.out.println("\n    +---+---+---+");
-        }
-        System.out.println("      1   2   3");
     }
 
     private int scoreGrid(int[][] grid) {
         int total = 0;
 
-        System.out.println("\n--- Row Scores ---");
-        for (int r = 0; r < 3; r++) {
-            int[] line = { grid[r][0], grid[r][1], grid[r][2] };
-            int score = scoreLine(line);
-            System.out.println("Row " + (r + 1) + " " + Arrays.toString(line) + ": " + score + " pts (" + lineName(line) + ")");
-            total += score;
+        // Rows
+        for (int i = 0; i < 3; i++) {
+            int[] line = {grid[i][0], grid[i][1], grid[i][2]};
+            int lineScore = scoreLine(line);
+            System.out.println("Row " + (i + 1) + ": " + Arrays.toString(line)
+                    + " -> " + lineName(line) + " = " + lineScore + " points");
+            total += lineScore;
         }
 
-        System.out.println("\n--- Column Scores ---");
-        for (int c = 0; c < 3; c++) {
-            int[] line = { grid[0][c], grid[1][c], grid[2][c] };
-            int score = scoreLine(line);
-            System.out.println("Col " + (c + 1) + " " + Arrays.toString(line) + ": " + score + " pts (" + lineName(line) + ")");
-            total += score;
+        // Columns
+        for (int j = 0; j < 3; j++) {
+            int[] line = {grid[0][j], grid[1][j], grid[2][j]};
+            int lineScore = scoreLine(line);
+            System.out.println("Column " + (j + 1) + ": " + Arrays.toString(line)
+                    + " -> " + lineName(line) + " = " + lineScore + " points");
+            total += lineScore;
         }
 
+        // Main diagonal
+        int[] diag1 = {grid[0][0], grid[1][1], grid[2][2]};
+        int diag1Score = scoreLine(diag1);
+        System.out.println("Diagonal 1: " + Arrays.toString(diag1)
+                + " -> " + lineName(diag1) + " = " + diag1Score + " points");
+        total += diag1Score;
+
+        // Other diagonal
+        int[] diag2 = {grid[0][2], grid[1][1], grid[2][0]};
+        int diag2Score = scoreLine(diag2);
+        System.out.println("Diagonal 2: " + Arrays.toString(diag2)
+                + " -> " + lineName(diag2) + " = " + diag2Score + " points");
+        total += diag2Score;
+
+        System.out.println("\nTotal score: " + total);
         return total;
     }
 
@@ -185,49 +110,56 @@ public class Game2_DiceGrid implements Game {
         int[] sorted = line.clone();
         Arrays.sort(sorted);
 
-        // Map for frequency check
-        Map<Integer, Integer> freq = new HashMap<>();
-        for (int d : sorted) freq.merge(d, 1, Integer::sum);
-        List<Integer> counts = new ArrayList<>(freq.values());
-        Collections.sort(counts, Collections.reverseOrder());
-        if (counts.get(0) == 3) return 15;    // Three of a Kind
-        if (isStraight3(sorted))  return 12;  // Straight
-        if (counts.get(0) == 2)   return 8;   // Pair
-        return 5;                              // All Different
-    }
+        // Three of a kind
+        if (sorted[0] == sorted[1] && sorted[1] == sorted[2]) {
+            return 30;
+        }
 
-    // Returns the pattern name for a single 3-value line (used for display). */
-    private String lineName(int[] line) {
-        int[] sorted = line.clone(); Arrays.sort(sorted);
+        // Straight
+        if (isStraight3(sorted)) {
+            return 20;
+        }
 
-        if (counts.get(0) == 3) return 15;     
-        if (isStraight3(sorted)) return 12;    
-        if (counts.get(0) == 2) return 8;      
-        return 5;                             
+        // Pair
+        if (sorted[0] == sorted[1] || sorted[1] == sorted[2]) {
+            return 10;
+        }
+
+        // All different
+        return 5;
     }
 
     private String lineName(int[] line) {
         int[] sorted = line.clone();
         Arrays.sort(sorted);
 
-        Map<Integer, Integer> freq = new HashMap<>();
-        for (int d : sorted) freq.merge(d, 1, Integer::sum);
-        List<Integer> counts = new ArrayList<>(freq.values());
-        Collections.sort(counts, Collections.reverseOrder());
+        if (sorted[0] == sorted[1] && sorted[1] == sorted[2]) {
+            return "Three of a Kind";
+        }
 
-        if (counts.get(0) == 3) return "Three of a Kind";
-        if (isStraight3(sorted)) return "Straight";
-        if (counts.get(0) == 2) return "Pair";
+        if (isStraight3(sorted)) {
+            return "Straight";
+        }
+
+        if (sorted[0] == sorted[1] || sorted[1] == sorted[2]) {
+            return "Pair";
+        }
+
         return "All Different";
     }
 
-    //
-     // Checks whether 3 sorted values form a consecutive straight
-     //(e.g. [2,3,4] or [4,5,6]).
-     
     private boolean isStraight3(int[] sorted) {
-        return sorted[1] == sorted[0] + 1 && sorted[2] == sorted[1] + 1;
-    private boolean isStraight3(int[] sorted) {
-        return (sorted[1] == sorted[0] + 1) && (sorted[2] == sorted[1] + 1);
+        return sorted[0] + 1 == sorted[1] && sorted[1] + 1 == sorted[2];
+    }
+
+    private int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
     }
 }
