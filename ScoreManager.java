@@ -1,77 +1,101 @@
+import java.io.*;
 import java.util.*;
 
-//The ScoreManager class acts as the person who manages leaderboards for each game in the system. 
-  //responsibility 
-     //1. collect of highest scores from all the registered users regarding a specific game. 
-     //2. This class performs sorting and then it shows the leaderboard with rankings.
-  //design
-     //1. ScoreManager does not have its own storage for the scores. 
-     //2. full list of objects of User from the UserManager and it makes a reading of values through 
-     // the method getHighestScore for the game index when there is a demand. 
-     // This is a very important issue for the prevention of duplication of data because 
-     // the User stays as the single source of truth about the matter.
+// UserManager.java
+// Handles player registration and persistent storage
+public class UserManager {
+    private static final String FILE_PATH = "players.txt";
 
-   //usage of the main program
-      //the scoreManager can show the leaderboard by using the index of game and the name of game and all users.
-          //The building and the printing of the ranked leaderboard for one specific game is done by the code. 
-          //This involves the 0-based index which matches with the score arrays of User 
-          //It also involves the name of game for the header and the list of all the users from UserManager. 
-          //This method allows for a clear display of performance and competition and ranking. 
-          //This structure maintains a balance of information across the system for the users.
+    private Map<String, User> users = new LinkedHashMap<>();
 
-public class ScoreManager {
+    public UserManager() {
+        loadFromFile();
+    }
 
-    
-     //Builds and prints a ranked leaderboard for one specific game.
-     
-       //@param gameIndex  0-based index of the game (matches User's score arrays)
-       // @param gameName   display name shown in the header
-       // @param allUsers   all registered User objects (from UserManager)
-     
-    public void showLeaderboard(int gameIndex, String gameName, List<User> allUsers) {
-        if (allUsers.isEmpty()) {
-            System.out.println("No players registered yet.");
+    public User register(String username) {
+        username = username.trim();
+
+        if (users.containsKey(username)) {
+            System.out.println("Welcome back, " + username + "!");
+            return users.get(username);
+        }
+
+        User newUser = new User(username);
+        users.put(username, newUser);
+        saveToFile();
+
+        System.out.println("New player registered: " + username);
+        return newUser;
+    }
+
+    public void saveToFile() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
+            writer.println("# username,totalGames,high0,high1,high2,high3,recent0,recent1,recent2,recent3");
+
+            for (User user : users.values()) {
+                writer.print(user.getUsername());
+                writer.print("," + user.getTotalGamesPlayed());
+
+                for (int i = 0; i < 4; i++) {
+                    writer.print("," + user.getHighestScore(i));
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    writer.print("," + user.getRecentScore(i));
+                }
+
+                writer.println();
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving player data: " + e.getMessage());
+        }
+    }
+
+    public List<User> getAllUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+    private void loadFromFile() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
             return;
         }
 
-        // Copy users into a list of entries (username + their best score for this game)
-        List<int[]>    scores = new ArrayList<>();
-        List<String>   names  = new ArrayList<>();
+        try (Scanner fileScanner = new Scanner(file)) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine().trim();
 
-        for (User u : allUsers) {
-            names.add(u.getUsername());
-            scores.add(new int[]{ u.getHighestScore(gameIndex) });
-        }
-
-        // Bubble sort: descending by best score
-        int n = scores.size();
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = i + 1; j < n; j++) {
-                if (scores.get(i)[0] < scores.get(j)[0]) {
-                    // Swap scores
-                    int[] tmpScore = scores.get(i);
-                    scores.set(i, scores.get(j));
-                    scores.set(j, tmpScore);
-                    // Swap names in sync
-                    String tmpName = names.get(i);
-                    names.set(i, names.get(j));
-                    names.set(j, tmpName);
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
                 }
-            }
-        }
 
-        // Print ranked leaderboard
-        System.out.println("\n===== Leaderboard: " + gameName + " =====");
-        System.out.printf("%-6s %-20s %s%n", "Rank", "Player", "Best Score");
-        System.out.println("--------------------------------------");
-        for (int i = 0; i < n; i++) {
-            String medal = "";
-            if      (i == 0) medal = " Gold ";
-            else if (i == 1) medal = " Silver ";
-            else if (i == 2) medal = " Bronze ";
-            System.out.printf("%-6s %-20s %d pts%s%n",
-                    "#" + (i + 1), names.get(i), scores.get(i)[0], medal);
+                String[] parts = line.split(",");
+
+                if (parts.length < 10) {
+                    continue;
+                }
+
+                String username = parts[0];
+                int totalGames = Integer.parseInt(parts[1]);
+
+                User user = new User(username);
+
+                for (int i = 0; i < totalGames; i++) {
+                    user.incrementTotalGamesPlayed();
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    user.setHighestScore(i, Integer.parseInt(parts[2 + i]));
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    user.setRecentScore(i, Integer.parseInt(parts[6 + i]));
+                }
+
+                users.put(username, user);
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading player data: " + e.getMessage());
         }
-        System.out.println("--------------------------------------");
     }
 }
