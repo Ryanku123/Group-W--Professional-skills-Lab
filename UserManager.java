@@ -80,9 +80,7 @@ public class UserManager {
 
                 User user = new User(username);
 
-                for (int i = 0; i < totalGames; i++) {
-                    user.incrementTotalGamesPlayed();
-                }
+                user.setTotalGamesPlayed(totalGames);
 
                 for (int i = 0; i < 4; i++) {
                     user.setHighestScore(i, Integer.parseInt(parts[2 + i]));
