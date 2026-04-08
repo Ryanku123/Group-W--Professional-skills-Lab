@@ -1,12 +1,5 @@
 import java.util.*;
 
-// Main.java
-// Runs the Dice Arcade game system:
-// - lets players register/login
-// - shows the game menu
-// - runs one of the 4 games
-// - updates and saves scores
-// - shows leaderboards
 public class Main {
     private static final String[] GAME_NAMES = {
         "Dice Patterns",
@@ -128,7 +121,8 @@ public class Main {
                 continue;
             }
 
-            ScoreManager.showLeaderboard(
+            ScoreManager scoreManager = new ScoreManager();
+            scoreManager.showLeaderboard(
                 choice - 1,
                 GAME_NAMES[choice - 1],
                 userManager.getAllUsers()
@@ -148,7 +142,7 @@ public class Main {
             );
         }
 
-        System.out.println("Total games played: " + user.getTotalGames());
+        System.out.println("Total games played: " + user.getTotalGamesPlayed());
         System.out.println("================================");
     }
 
